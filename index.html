@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsent — A Wall of Words for Nurses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F4EFE6;
+    --cream-deep: #EDE5D6;
+    --ink: #1C1814;
+    --ink-soft: #3D3630;
+    --ink-faint: #8A7E74;
+    --rose: #B5705A;
+    --rose-light: #D4907A;
+    --rose-pale: #F0DDD6;
+    --sage: #7A8C7A;
+    --gold: #C49A5A;
+    --paper: #FAF7F2;
+    --shadow: rgba(28,24,20,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 999; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.45;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(244,239,230,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(28,24,20,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  .nav-logo span { color: var(--rose); }
+
+  .nav-links { display: flex; gap: 2rem; }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--rose); }
+  .nav-links a.active { color: var(--rose); }
+
+  /* ── SECTIONS (scroll-based) ── */
+  .screen { display: block; }
+
+  /* ── HERO ── */
+  #screen-home {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+  }
+
+  .hero-deco {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: rgba(181,112,90,0.07);
+    font-size: clamp(5rem, 14vw, 12rem);
+    font-weight: 600;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    line-height: 1.1;
+    text-align: center;
+    color: var(--ink);
+    max-width: 800px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--rose);
+  }
+
+  .hero-sub {
+    margin-top: 1.8rem;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.75;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+
+  .hero-cta {
+    margin-top: 3rem;
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 1s 0.35s ease both;
+  }
+
+  .btn-primary {
+    background: var(--rose);
+    color: #fff;
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.25s, transform 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary:hover { background: #9E5D49; transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1.5px solid rgba(28,24,20,0.2);
+    padding: 0.9rem 2.2rem;
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: border-color 0.25s, color 0.25s, transform 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-ghost:hover { border-color: var(--rose); color: var(--rose); transform: translateY(-1px); }
+
+  .hero-scroll-hint {
+    position: absolute; bottom: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    animation: pulse 2.5s ease infinite;
+  }
+
+  /* ── WRITE SCREEN ── */
+  #screen-write {
+    min-height: 100vh;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 7rem 1.5rem 4rem;
+    background: var(--cream);
+  }
+
+  .write-container {
+    width: 100%; max-width: 700px;
+  }
+
+  .write-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .write-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 0.8rem;
+  }
+
+  .write-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .write-sub {
+    margin-top: 0.8rem;
+    font-size: 0.92rem;
+    color: var(--ink-faint);
+    line-height: 1.65;
+  }
+
+  .privacy-notice {
+    margin-top: 1.2rem;
+    background: rgba(122,140,122,0.1);
+    border: 1px solid rgba(122,140,122,0.25);
+    border-left: 3px solid var(--sage);
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+  }
+
+  .privacy-icon { flex-shrink: 0; font-size: 0.85rem; margin-top: 1px; }
+
+  .prompt-pills {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin: 1.8rem 0;
+  }
+
+  .pill {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    border: 1px solid rgba(28,24,20,0.15);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--paper);
+  }
+
+  .pill:hover, .pill.active {
+    background: var(--rose-pale);
+    border-color: var(--rose-light);
+    color: var(--rose);
+  }
+
+  /* Paper card */
+  .paper-card {
+    background: var(--paper);
+    border: 1px solid rgba(28,24,20,0.08);
+    border-radius: 3px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 24px var(--shadow), 0 1px 4px rgba(28,24,20,0.06);
+    position: relative;
+  }
+
+  .paper-card::before {
+    content: '';
+    position: absolute; top: 0; left: 3rem;
+    width: 1px; height: 100%;
+    background: rgba(181,112,90,0.12);
+  }
+
+  .letter-salutation {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    padding-left: 1.5rem;
+  }
+
+  .letter-textarea {
+    width: 100%;
+    min-height: 260px;
+    border: none;
+    background: transparent;
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--ink-soft);
+    resize: none;
+    outline: none;
+    padding-left: 1.5rem;
+  }
+
+  .letter-textarea::placeholder {
+    color: rgba(28,24,20,0.2);
+    font-style: italic;
+  }
+
+  .char-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    text-align: right;
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .char-count.warn { color: var(--rose); }
+
+  .write-footer {
+    margin-top: 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+
+  .consent-label {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    line-height: 1.5;
+    cursor: pointer;
+    max-width: 380px;
+  }
+
+  .consent-label input[type="checkbox"] {
+    margin-top: 2px;
+    accent-color: var(--rose);
+    flex-shrink: 0;
+  }
+
+  .submitted-banner {
+    display: none;
+    background: var(--rose-pale);
+    border: 1px solid var(--rose-light);
+    border-radius: 3px;
+    padding: 1.5rem 2rem;
+    margin-top: 1.5rem;
+    text-align: center;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .submitted-banner h3 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--rose);
+    margin-bottom: 0.4rem;
+  }
+
+  .submitted-banner p {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ── WALL SCREEN ── */
+  #screen-wall {
+    min-height: 100vh;
+    padding: 7rem 2rem 5rem;
+    background: var(--ink);
+  }
+
+  .wall-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .wall-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .wall-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    color: var(--cream);
+    line-height: 1.2;
+  }
+
+  .wall-sub {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--ink-faint);
+    max-width: 480px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.65;
+  }
+
+  .wall-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .letter-card {
+    background: var(--paper);
+    border-radius: 2px;
+    padding: 2rem 1.8rem;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+
+  .letter-card:hover {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+
+  .letter-card::before {
+    content: '';
+    position: absolute; top: 0; left: 2.2rem;
+    width: 1px; height: 100%;
+    background: rgba(181,112,90,0.1);
+  }
+
+  .card-salutation {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--rose);
+    margin-bottom: 0.9rem;
+    padding-left: 0.8rem;
+  }
+
+  .card-body {
+    font-family: 'Lora', serif;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    padding-left: 0.8rem;
+  }
+
+  .card-footer {
+    margin-top: 1.2rem;
+    padding-left: 0.8rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  .card-tag {
+    display: inline-block;
+    background: var(--rose-pale);
+    color: var(--rose);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin-bottom: 0.6rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── COMMUNITY SECTION ── */
+  .community-section {
+    max-width: 1100px;
+    margin: 5rem auto 0;
+    padding-top: 3.5rem;
+    border-top: 1px solid rgba(244,239,230,0.1);
+  }
+
+  .community-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap; gap: 1rem;
+  }
+
+  .community-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--cream);
+  }
+
+  .live-badge {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .community-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    border: 1px dashed rgba(244,239,230,0.12);
+    border-radius: 3px;
+  }
+
+  .community-empty p {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: rgba(244,239,230,0.25);
+    line-height: 1.7;
+  }
+
+  .community-empty span {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(244,239,230,0.15);
+    margin-top: 0.6rem;
+  }
+
+  .new-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .letter-card.community-card {
+    background: #272018;
+    border: 1px solid rgba(196,154,90,0.18);
+  }
+
+  .letter-card.community-card .card-salutation { color: var(--gold); }
+  .letter-card.community-card .card-body { color: rgba(244,239,230,0.75); }
+  .letter-card.community-card .card-footer { color: rgba(244,239,230,0.3); }
+  .letter-card.community-card .card-tag {
+    background: rgba(196,154,90,0.12);
+    color: var(--gold);
+  }
+
+  .letter-card.community-card.fresh-in {
+    animation: slideIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px) rotate(var(--tilt, 0deg)); }
+    to   { opacity: 1; transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  }
+
+  /* ── HOW IT WORKS ── */
+  #screen-about {
+    padding: 7rem 2rem 5rem;
+    background: var(--cream-deep);
+  }
+
+  .about-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 3rem;
+  }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+  }
+
+  .step-card {
+    background: var(--paper);
+    padding: 2rem;
+    border-radius: 2px;
+    border-top: 3px solid var(--rose);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 3rem;
+    color: var(--rose-pale);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+
+  .step-desc {
+    font-size: 0.88rem;
+    color: var(--ink-faint);
+    line-height: 1.65;
+  }
+
+  .evidence-strip {
+    margin-top: 4rem;
+    background: var(--rose);
+    padding: 2.5rem;
+    border-radius: 3px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+  }
+
+  .evidence-item { text-align: center; }
+
+  .evidence-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .evidence-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.4rem;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink);
+    color: var(--ink-faint);
+    text-align: center;
+    padding: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+  }
+
+  footer em { color: var(--rose); font-style: normal; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { gap: 1rem; }
+    .paper-card { padding: 1.5rem 1.2rem; }
+    .paper-card::before { left: 2rem; }
+    .letter-salutation { padding-left: 0.8rem; }
+    .letter-textarea { padding-left: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><em>un</em><span>sent</span></div>
+  <div class="nav-links">
+    <a href="#screen-home">Home</a>
+    <a href="#screen-write">Write</a>
+    <a href="#screen-wall">The Wall</a>
+    <a href="#screen-about">About</a>
+  </div>
+</nav>
+
+<!-- sections below -->
+
+<!-- HOME SCREEN -->
+<div class="screen active" id="screen-home">
+  <div class="hero-deco">unsent</div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;">
+    <p class="hero-tag">A safe space for nurses</p>
+    <h1 class="hero-title">
+      For the words you never got to <em>send</em>
+    </h1>
+    <p class="hero-sub">
+      After a hard shift, some feelings have no destination. Unsent gives them a home — through the quiet, healing act of writing letters that are never sent, but always heard. So that when you walk out those doors, you can leave the weight of the ward behind, and come home to yourself.
+    </p>
+    <div class="hero-cta">
+      <a href="#screen-write" class="btn-primary" style="text-decoration:none;display:inline-block;">Write a Letter</a>
+      <a href="#screen-wall" class="btn-ghost" style="text-decoration:none;display:inline-block;">View the Wall</a>
+    </div>
+  </div>
+  <p class="hero-scroll-hint">scroll to explore</p>
+</div>
+
+<!-- WRITE SCREEN -->
+<div class="screen" id="screen-write">
+  <div class="write-container">
+    <div class="write-header">
+      <p class="write-tag">Write privately</p>
+      <h2 class="write-title">Dear&nbsp;—</h2>
+      <p class="write-sub">
+        Choose a starting point, or write freely. Your words are yours alone. Nothing is stored with your name. Nothing is ever sent.
+      </p>
+      <div class="privacy-notice">
+        <span class="privacy-icon">🔒</span>
+        To protect patient privacy, please do not include names, room or bed numbers, dates, ward names, or any detail that could identify a patient or colleague.
+      </div>
+    </div>
+
+    <div class="prompt-pills">
+      <span class="pill" onclick="setPrompt(this, 'Dear someone I cared for, ')">A patient</span>
+      <span class="pill" onclick="setPrompt(this, 'Dear mistake I made today, ')">A mistake</span>
+      <span class="pill" onclick="setPrompt(this, 'Dear younger me, ')">Younger me</span>
+      <span class="pill" onclick="setPrompt(this, 'Dear difficult shift, ')">A difficult day</span>
+      <span class="pill" onclick="setPrompt(this, 'Dear family who doesn\'t understand, ')">My family</span>
+      <span class="pill" onclick="setPrompt(this, 'Dear exhaustion, ')">My exhaustion</span>
+    </div>
+
+    <div class="paper-card">
+      <div class="letter-salutation" id="salutation">Dear ___,</div>
+      <textarea
+        class="letter-textarea"
+        id="letterBody"
+        maxlength="800"
+        placeholder="I want you to know that..."
+        oninput="updateCount()"
+      ></textarea>
+      <div class="char-count" id="charCount">0 / 800</div>
+    </div>
+
+    <div class="write-footer">
+      <label class="consent-label">
+        <input type="checkbox" id="consentCheck">
+        I am open to this letter — anonymised and without my name — being displayed on the Wall of Words to help others feel less alone.
+      </label>
+      <button class="btn-primary" onclick="submitLetter()">Release it</button>
+    </div>
+
+    <div class="submitted-banner" id="submittedBanner">
+      <h3>The loop is closed.</h3>
+      <p>Your letter has been released. Thank you for your courage. You are not alone in what you carry.</p>
+    </div>
+  </div>
+</div>
+
+<!-- WALL SCREEN -->
+<div class="screen" id="screen-wall">
+  <div class="wall-header">
+    <p class="wall-tag">March 2026 — Wall of Words</p>
+    <h2 class="wall-title">Letters from those<br>who carry us</h2>
+    <p class="wall-sub">Shared anonymously, with permission. Each letter a window into a heart that kept going.</p>
+  </div>
+
+  <div class="wall-grid" id="wallGrid">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- COMMUNITY LETTERS -->
+  <div class="community-section">
+    <div class="community-header">
+      <h3 class="community-title">Fresh from the ward <span id="communityCount" style="font-size:1rem;color:var(--ink-faint);font-style:normal;"></span></h3>
+      <div class="live-badge"><div class="live-dot"></div> Live this session</div>
+    </div>
+    <div class="community-grid" id="communityGrid">
+      <div class="community-empty" id="communityEmpty">
+        <p>No letters shared yet this session.<br>Be the first to add yours to the wall.</p>
+        <span>Write a letter and tick the sharing box to appear here</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT SCREEN -->
+<div class="screen" id="screen-about">
+  <div class="about-inner">
+    <p class="section-tag">How it works</p>
+    <h2 class="section-title">A ritual of release,<br>built on evidence</h2>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Write privately</h3>
+        <p class="step-desc">After a shift, nurses write a short unsent letter — to a patient, a mistake, a difficult moment. The writing itself is the therapy; it is never sent and never stored with identity.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Choose to share</h3>
+        <p class="step-desc">Writers may opt in to share their letter anonymously. A small curatorial team selects letters for the monthly physical installation in nurse rest areas.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <h3 class="step-title">The Wall appears</h3>
+        <p class="step-desc">Once a month, selected letters are beautifully typeset on card stock and displayed in a physical Wall of Words — transforming private pain into shared humanity.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <h3 class="step-title">The cycle continues</h3>
+        <p class="step-desc">Nurses see their colleagues' words on the wall. They feel recognised, less alone. The next shift, another letter begins — and the community of care deepens.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><em>unsent</em> — a prototype for nurse emotional wellbeing &nbsp;·&nbsp; anonymous, always &nbsp;·&nbsp; built with care</p>
+</footer>
+
+<script>
+  // ── SAMPLE WALL DATA ──
+  const sampleLetters = [
+    {
+      tag: "A patient",
+      salutation: "Dear someone I couldn't stay for,",
+      body: "I don't know if you made it through the night. I had to leave at the end of my shift. I hope you know that I was still thinking of you on the drive home — because you deserved to be remembered as a person, not a case.",
+      date: "night shift",
+      tilt: "-1.2deg"
+    },
+    {
+      tag: "A mistake",
+      salutation: "Dear mistake I made today,",
+      body: "I caught you in time. I caught you. And I will spend years making sure no one else carries you. You are not the end of me. You are the reason I will be better.",
+      date: "ICU",
+      tilt: "0.8deg"
+    },
+    {
+      tag: "Younger me",
+      salutation: "Dear 22-year-old me,",
+      body: "You chose this because you wanted to matter. I want you to know — you do. Even on the days when you cry in the carpark before driving home. Especially then.",
+      date: "12-hour shift",
+      tilt: "-0.5deg"
+    },
+    {
+      tag: "Exhaustion",
+      salutation: "Dear exhaustion,",
+      body: "You have lived in my shoulders for eight months now. I see you. I am not ashamed of you. But I am asking you — gently — to let me sleep tonight.",
+      date: "after back-to-back nights",
+      tilt: "1.4deg"
+    },
+    {
+      tag: "A patient",
+      salutation: "Dear someone who asked how I was doing,",
+      body: "You were in so much pain and you still asked how my day was going. I've thought about that every day this week. You reminded me why I started.",
+      date: "general ward",
+      tilt: "-0.9deg"
+    },
+    {
+      tag: "A difficult day",
+      salutation: "Dear today,",
+      body: "Three codes. One we lost. I am not going to pretend that is okay. But I showed up. And tomorrow I will show up again. That is all I can promise right now.",
+      date: "emergency department",
+      tilt: "0.3deg"
+    }
+  ];
+
+  // Populate wall
+  const grid = document.getElementById('wallGrid');
+  sampleLetters.forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'letter-card';
+    card.style.setProperty('--tilt', l.tilt);
+    card.innerHTML = `
+      <span class="card-tag">${l.tag}</span>
+      <div class="card-salutation">${l.salutation}</div>
+      <div class="card-body">${l.body}</div>
+      <div class="card-footer">${l.date}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // ── SMOOTH SCROLL (offset for fixed nav) ──
+  const NAV_H = 64;
+  document.querySelectorAll('a[href^="#screen-"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      const top = target.getBoundingClientRect().top + window.scrollY - NAV_H;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  // ── SCROLL SPY — highlight active nav link ──
+  const sections = ['screen-home','screen-write','screen-wall','screen-about'];
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  function updateActiveNav() {
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top <= NAV_H + 40) current = id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+  updateActiveNav();
+
+  // ── PROMPT PILLS ──
+  let activePill = null;
+  function setPrompt(el, salutation) {
+    if (activePill) activePill.classList.remove('active');
+    if (activePill === el) { activePill = null; return; }
+    el.classList.add('active');
+    activePill = el;
+    document.getElementById('salutation').textContent = salutation;
+    document.getElementById('letterBody').focus();
+  }
+
+  // ── CHAR COUNT ──
+  function updateCount() {
+    const ta = document.getElementById('letterBody');
+    const cc = document.getElementById('charCount');
+    const len = ta.value.length;
+    cc.textContent = len + ' / 800';
+    cc.classList.toggle('warn', len > 700);
+  }
+
+  // ── IN-MEMORY COMMUNITY LETTERS ──
+  const communityLetters = [];
+  const tilts = ['-1.8deg','1.2deg','-0.6deg','0.9deg','-1.4deg','0.4deg','1.7deg','-0.3deg'];
+
+  function addToCommunityWall(salutation, body, tag) {
+    const grid = document.getElementById('communityGrid');
+    const empty = document.getElementById('communityEmpty');
+    if (empty) empty.remove();
+
+    const tilt = tilts[communityLetters.length % tilts.length];
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+    const card = document.createElement('div');
+    card.className = 'letter-card community-card fresh-in';
+    card.style.setProperty('--tilt', tilt);
+    card.innerHTML = `
+      <span class="card-tag">${tag || 'A letter'}</span><span class="new-badge">Just added</span>
+      <div class="card-salutation">${escapeHtml(salutation)}</div>
+      <div class="card-body">${escapeHtml(body)}</div>
+      <div class="card-footer">shared today · ${dateStr}, ${timeStr}</div>
+    `;
+    grid.prepend(card);
+
+    // Remove "just added" badge after 8s
+    setTimeout(() => {
+      const badge = card.querySelector('.new-badge');
+      if (badge) badge.style.transition = 'opacity 0.5s', badge.style.opacity = '0';
+      setTimeout(() => badge && badge.remove(), 500);
+    }, 8000);
+
+    communityLetters.push({ salutation, body, tag });
+    updateCommunityCount();
+  }
+
+  function updateCommunityCount() {
+    const el = document.getElementById('communityCount');
+    if (el) el.textContent = communityLetters.length > 0 ? `(${communityLetters.length})` : '';
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── SUBMIT ──
+  function submitLetter() {
+    const body = document.getElementById('letterBody').value.trim();
+    if (!body) { alert('Your letter is still blank. Take a moment — there\'s no rush.'); return; }
+
+    const consent = document.getElementById('consentCheck').checked;
+    const salutation = document.getElementById('salutation').textContent;
+    const activeTag = activePill ? activePill.textContent : 'A letter';
+
+    if (consent) {
+      addToCommunityWall(salutation, body, activeTag);
+      document.getElementById('submittedBanner').querySelector('p').textContent =
+        'Your letter has been released — and added to the Wall of Words. Thank you for your courage. You are not alone in what you carry.';
+    } else {
+      document.getElementById('submittedBanner').querySelector('p').textContent =
+        'Your letter has been released. Thank you for your courage. You are not alone in what you carry.';
+    }
+
+    document.getElementById('submittedBanner').style.display = 'block';
+    document.getElementById('letterBody').value = '';
+    document.getElementById('charCount').textContent = '0 / 800';
+    document.getElementById('salutation').textContent = 'Dear ___,';
+    if (activePill) { activePill.classList.remove('active'); activePill = null; }
+    document.getElementById('consentCheck').checked = false;
+    document.getElementById('submittedBanner').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+</body>
+</html>
